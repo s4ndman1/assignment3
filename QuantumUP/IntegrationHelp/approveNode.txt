@@ -1,0 +1,5 @@
+http://localhost:7001/rest/UP/node/approveNode/{adminID}/{timeStart}/{timeEnd}
+
+Example:http://localhost:7001/rest/UP/node/approveNode/ADN2018051304223/06:00/12:00
+HTML Return:
+<data contentType="text/plain" contentLength="4"><![CDATA[true]]></data>

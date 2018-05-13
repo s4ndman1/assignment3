@@ -1,0 +1,5 @@
+http://localhost:7001/rest/UP/node/killNode/{nodeID}
+
+Example:http://localhost:7001/rest/UP/node/killNode/NOD20185132225825
+HTML Return:
+<data contentType="text/plain" contentLength="4"><![CDATA[true]]></data>

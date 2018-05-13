@@ -1,0 +1,47 @@
+http://localhost:7001/rest/UP/node/getAllOwnNodes/{adminID}
+
+Example: http://localhost:7001/rest/UP/node/getAllOwnNodes/ADN2018051304223
+
+JSON Return:
+[
+      {
+      "activeTime": "06:00",
+      "adminId": "ADN2018051304223",
+      "creationDate": "2018-05-13",
+      "endTime": "12:00",
+      "nodeId": "NOD20185131842432",
+      "state": "Active"
+   },
+      {
+      "activeTime": "06:00",
+      "adminId": "ADN2018051304223",
+      "creationDate": "2018-05-13",
+      "endTime": "12:00",
+      "nodeId": "NOD20185132225825",
+      "state": "Active"
+   },
+      {
+      "activeTime": "06:00",
+      "adminId": "ADN2018051304223",
+      "creationDate": "2018-05-13",
+      "endTime": "12:00",
+      "nodeId": "NOD201851323415412",
+      "state": "Active"
+   },
+      {
+      "activeTime": "06:00",
+      "adminId": "ADN2018051304223",
+      "creationDate": "2018-05-13",
+      "endTime": "12:00",
+      "nodeId": "NOD20185131833064",
+      "state": "Active"
+   },
+      {
+      "activeTime": "06:00",
+      "adminId": "ADN2018051304223",
+      "creationDate": "2018-05-13",
+      "endTime": "12:00",
+      "nodeId": "NOD20185131833839",
+      "state": "Active"
+   }
+]
