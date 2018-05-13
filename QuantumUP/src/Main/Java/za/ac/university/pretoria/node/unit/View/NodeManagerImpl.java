@@ -12,8 +12,9 @@ public class NodeManagerImpl implements NodeManager{
 	public NodeManagerImpl() {
 		con=new DatabaseConnection();
 	}
-	
-	public List<NodeInfo> viewAllNodes(long nodeID) throws SQLException{
+
+	@Override
+	public List<NodeInfo> viewAllNodes(String nodeID) throws SQLException{
 		List<NodeInfo> nodes = new ArrayList<NodeInfo>();
 		
 		// All the information in NODE_INFO, Active start and end times in Node Calendar, Task id and start time from TASK_TABLE
@@ -25,7 +26,9 @@ public class NodeManagerImpl implements NodeManager{
 		return nodes;
 		
 	}
-	public boolean killNode(long nodeID) throws SQLException {
+
+	@Override
+	public boolean killNode(String nodeID) throws SQLException {
 		
 		String query = "UPDATE NODE_INFO "
 				+ "SET NODE_STATUS = "
@@ -37,7 +40,8 @@ public class NodeManagerImpl implements NodeManager{
 		
 		return true;
 	}
-	public boolean approveNode(long nodeID,LocalTime startTime,LocalTime endTime)  throws SQLException {
+	@Override
+	public boolean approveNode(String nodeID,LocalTime startTime,LocalTime endTime)  throws SQLException {
 		
 		String query="INSERT INTO NODE_INFO(node_creation_date,node_status) VALUES(Date, state_id=2) ";
 		con.executeQuery(query);
@@ -45,12 +49,28 @@ public class NodeManagerImpl implements NodeManager{
 		con.executeQuery(querycalender);
 		return true;
 	}
-	
-	public boolean removeNode(long nodeID) throws SQLException {
+
+	@Override
+	public boolean removeNode(String nodeID) throws SQLException {
 		String query="DELETE FROM NODE_INFO WHERE NODE_ID == "+nodeID;
 		con.executeQuery(query);
 		
 		return true;
 	}
-	
+
+	@Override
+	public List<NodeInfo> viewAllOwnNodes(String adminID, String nodeID) throws SQLException {
+		return null;
+	}
+
+	@Override
+	public boolean changeNodeToActive(String nodeID) throws SQLException {
+		return false;
+	}
+
+	@Override
+	public boolean changeNodeToUnavailalbe(String nodeID) throws SQLException {
+		return false;
+	}
+
 }

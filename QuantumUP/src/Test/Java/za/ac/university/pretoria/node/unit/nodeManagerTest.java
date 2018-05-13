@@ -1,8 +1,8 @@
-package za.ac.university.pretoria.node.unit;
+package Java.za.ac.university.pretoria.node.unit;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 
-import nodeUnit.View.NodeManager;
+import za.ac.university.pretoria.node.unit.View.NodeManager;
 
 public class nodeManagerTest {
 
