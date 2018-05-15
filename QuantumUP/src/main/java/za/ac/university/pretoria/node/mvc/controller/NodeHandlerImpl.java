@@ -6,6 +6,9 @@ import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 import java.util.List;
 
 public class NodeHandlerImpl implements NodeHandler {
+
+
+
     @Override
     public boolean isNodeActive(String nodeID) {
         return false;

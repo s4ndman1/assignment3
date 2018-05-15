@@ -3,7 +3,7 @@ package za.ac.university.pretoria.node.mvc.controller;
 import java.sql.*;
 
 public  class DatabaseConnection {
-	
+
 	private Connection connect;
 	private Statement stmt;
 	
@@ -11,7 +11,7 @@ public  class DatabaseConnection {
 
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			connect=DriverManager.getConnection(
-                    "jdbc:oracle:thin:@localhost:1521:assignment","cos","password");
+                    "jdbc:oracle:thin:@localhost:9981:xe","system","oracle");
 			
 			stmt = connect.createStatement();
 			System.out.println("Database connected");

@@ -1,0 +1,12 @@
+version: '3'
+services:
+        weblogic:
+                image: "s4ndman1/weblogic"
+                ports:
+                - "7001:7001"
+                - "7002:7002"
+        oracle:
+                image: "s4ndman1/oracle"
+                ports:
+                - "9981:1521"
+                - "9980:8080"
