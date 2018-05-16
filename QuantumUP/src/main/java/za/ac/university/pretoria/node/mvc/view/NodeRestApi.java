@@ -2,6 +2,7 @@ package za.ac.university.pretoria.node.mvc.view;
 
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
@@ -14,8 +15,9 @@ public class NodeRestApi {
 
     NodeUIImpl nodeUI;
 
-    public NodeRestApi() throws SQLException, ClassNotFoundException {
-        nodeUI = new NodeUIImpl();
+    @Inject
+    public NodeRestApi(NodeUIImpl nodeUI) throws SQLException, ClassNotFoundException {
+        this.nodeUI = nodeUI;
     }
 
     @GET

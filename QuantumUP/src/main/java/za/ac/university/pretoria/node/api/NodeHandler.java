@@ -1,16 +1,33 @@
 package za.ac.university.pretoria.node.api;
 
+import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface NodeHandler {
 
-    public boolean isNodeActive(String nodeID);
-    public boolean setNodeActive(String nodeID);
-    public boolean setNodeUnavailable(String nodeID);
-    public List<NodeInfo> getUnavailableNodes();
-    public List<NodeInfo> getAvailableNodes();
+    public boolean isNodeActive(String nodeID) throws SQLException, NodeException;
 
+    public boolean setNodeActive(String nodeID) throws SQLException;
+
+    public boolean setNodeUnavailable(String nodeID) throws SQLException;
+
+    public boolean setNodeBusy(String nodeID) throws SQLException;
+
+    public boolean setInterruptedNodeActive(String nodeID) throws SQLException;
+
+    public List<NodeInfo> getUnavailableNodes() throws SQLException;
+
+    public List<NodeInfo> getAvailableNodes() throws SQLException;
+
+    public int getTotalNodeCount() throws SQLException;
+
+    public int getTotalActiveNodes() throws SQLException;
+
+    public int getTotalBusyNodes() throws SQLException;
+
+    public int getTotalUnavailableNodes() throws SQLException;
 
 }

@@ -1,18 +1,21 @@
 package za.ac.university.pretoria.node.mvc.controller;
 
+
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+import javax.sql.DataSource;
 import java.sql.*;
 
+@Singleton
 public  class DatabaseConnection {
 
-	private Connection connect;
+    @Resource
+	private DataSource dataSource;
 	private Statement stmt;
 	
 	 public DatabaseConnection() throws SQLException, ClassNotFoundException {
 
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			connect=DriverManager.getConnection(
-                    "jdbc:oracle:thin:@localhost:9981:xe","system","oracle");
-			
+			Connection connect=dataSource.getConnection();
 			stmt = connect.createStatement();
 			System.out.println("Database connected");
 		 
@@ -20,10 +23,6 @@ public  class DatabaseConnection {
 
 	 public ResultSet executeQuery(String query) throws SQLException  {
 		 ResultSet result = stmt.executeQuery(query);
-//		 List<String> results = new ArrayList<>();
-//		 while (result.next()){
-//			 results.add(result.getString(1));
-//		 }
 		 return result;
 	 }
 

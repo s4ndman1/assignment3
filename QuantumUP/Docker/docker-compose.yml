@@ -10,3 +10,4 @@ services:
                 ports:
                 - "9981:1521"
                 - "9980:8080"
+                volume: /my/oracle/data:/u01/app/oracle sath89/oracle-12c

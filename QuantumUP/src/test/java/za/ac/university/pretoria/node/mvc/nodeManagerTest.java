@@ -2,6 +2,7 @@ package za.ac.university.pretoria.node.mvc;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 
@@ -25,8 +26,7 @@ public class nodeManagerTest {
 
     @Before
     public void init() throws SQLException, ClassNotFoundException {
-        manager = new NodeUIImpl();
-        connection = new DatabaseConnection();
+        connection =mock(DatabaseConnection.class);
     }
 
     @Test

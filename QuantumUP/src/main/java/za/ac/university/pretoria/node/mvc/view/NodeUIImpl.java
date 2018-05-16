@@ -12,13 +12,18 @@ import java.util.Random;
 import za.ac.university.pretoria.node.api.NodeUI;
 import za.ac.university.pretoria.node.mvc.controller.DatabaseConnection;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class NodeUIImpl implements NodeUI {
 	
 	private DatabaseConnection con;
 	private Random random;
-	
-	public NodeUIImpl() throws SQLException, ClassNotFoundException {
-		con=new DatabaseConnection();
+	@Inject
+	public NodeUIImpl(DatabaseConnection connection) throws SQLException, ClassNotFoundException {
+		con=connection;
 		random = new Random();
 	}
 

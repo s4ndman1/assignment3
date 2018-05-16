@@ -1,52 +1,75 @@
 package za.ac.university.pretoria.node.mvc;
 
-import za.ac.university.pretoria.node.api.Task;
+import com.google.gson.Gson;
+import za.ac.university.pretoria.node.api.NodeHandler;
 import za.ac.university.pretoria.node.mvc.controller.NodeImpl;
-import za.ac.university.pretoria.node.mvc.model.Report;
+import za.ac.university.pretoria.node.mvc.model.Report.FinalReport;
+import za.ac.university.pretoria.node.mvc.model.Report.Report;
+import za.ac.university.pretoria.node.mvc.model.Report.Value;
+import za.ac.university.pretoria.node.mvc.model.Report.ValueMetaData;
 import org.junit.Before;
 import org.junit.Test;
+import za.ac.university.pretoria.node.mvc.model.Task.Measurement;
+import za.ac.university.pretoria.node.mvc.model.Task.Task;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class mockTask {
+public class mockNodeTest {
 
     Task task;
+    Gson gson;
     NodeImpl nodeImpl;
+    NodeHandler nodeHandler;
+
     @Before
     public void init() throws SQLException, ClassNotFoundException {
-        nodeImpl = new NodeImpl();
         task = mock(Task.class);
-        List<String> mockList = new ArrayList<>();
+        nodeHandler = mock(NodeHandler.class);
+        nodeImpl = new NodeImpl(nodeHandler);
+        gson = new Gson();
 
-        mockList.add("energyGenerated");
-        mockList.add("memoryUsage");
-        mockList.add("cpuTime");
-        mockList.add("cpuUsage");
-        mockList.add("heatGenerated");
+        ArrayList<Measurement> measurements = new ArrayList<>();
 
-        when(task.getMetrics()).thenReturn(mockList);
+        Measurement measurement = new Measurement();
+        measurement.setName("Francois1");
+        measurement.setID(1);
+        measurements.add(measurement);
+
+        Measurement measurement2 = new Measurement();
+        measurement2.setName("Francois1");
+        measurement2.setID(2);
+        measurements.add(measurement2);
+
+        when(task.getMeasurement()).thenReturn(measurements);
+
     }
 
     @Test
-    public void testCPUUsage(){
+    public void testCPUUsage() {
 
-        Report report = nodeImpl.execute(task);
+        FinalReport finalReport = nodeImpl.execute(task);
 
-
-        assertTrue(report.getCpuTime().size() > 0);
-        assertTrue(report.getCpuUsage().size() > 0);
-        assertTrue(report.getElapsedTime() > 0);
-        assertTrue(report.getEnergyGenerated().size() > 0);
-        assertTrue(report.getHeatGenerated().size() > 0);
-        assertTrue(report.getMemoryUsage().size() > 0);
+        for (Report report : finalReport.getResult())
+            for (ValueMetaData valueMetaData : report.getResult())
+                for (Value value : valueMetaData.getValues()) {
+                    assertFalse(value.getValue() == null);
+                    assertFalse(value.getValue().isEmpty());
+                }
     }
 
+
+    @Test
+    public void testReportToJson() {
+
+        FinalReport report = nodeImpl.execute(task);
+        String json = gson.toJson(report);
+        assertFalse(json.isEmpty());
+    }
 //
 //    @Test
 //    public void testCPUTime(){
@@ -54,7 +77,7 @@ public class mockTask {
 //        when(task.execute()).thenReturn("10 seconds");
 //        when(task.getMetric()).thenReturn("CPU-TIME");
 //
-//        Report report = nodeImpl.execute(task);
+//        ValueMetaData report = nodeImpl.execute(task);
 //
 //        assertTrue(report.getMetric().equalsIgnoreCase("CPU-TIME"));
 //        assertTrue(report.getSingleMeasurement().equalsIgnoreCase("10 seconds"));
@@ -68,7 +91,7 @@ public class mockTask {
 //        when(task.execute()).thenReturn("20 seconds");
 //        when(task.getMetric()).thenReturn("Elapsed Time");
 //
-//        Report report = nodeImpl.execute(task);
+//        ValueMetaData report = nodeImpl.execute(task);
 //
 //        assertTrue(report.getMetric().equalsIgnoreCase("Elapsed Time"));
 //        assertTrue(report.getSingleMeasurement().equalsIgnoreCase("20 seconds"));
@@ -80,7 +103,7 @@ public class mockTask {
 //        when(task.execute()).thenReturn("531Mb");
 //        when(task.getMetric()).thenReturn("Memory-Usage");
 //
-//        Report report = nodeImpl.execute(task);
+//        ValueMetaData report = nodeImpl.execute(task);
 //
 //        assertTrue(report.getMetric().equalsIgnoreCase("Memory-Usage"));
 //        assertTrue(report.getSingleMeasurement().equalsIgnoreCase("531Mb"));
@@ -92,7 +115,7 @@ public class mockTask {
 //        when(task.execute()).thenReturn("1.0");
 //        when(task.getMetric()).thenReturn("Energy Generated");
 //
-//        Report report = nodeImpl.execute(task);
+//        ValueMetaData report = nodeImpl.execute(task);
 //
 //        assertTrue(report.getMetric().equalsIgnoreCase("Energy Generated"));
 //        assertTrue(report.getSingleMeasurement().equalsIgnoreCase("1.0"));
@@ -104,7 +127,7 @@ public class mockTask {
 //        when(task.execute()).thenReturn("1.0");
 //        when(task.getMetric()).thenReturn("Heat Generated");
 //
-//        Report report = nodeImpl.execute(task);
+//        ValueMetaData report = nodeImpl.execute(task);
 //
 //        assertTrue(report.getMetric().equalsIgnoreCase("Heat Generated"));
 //        assertTrue(report.getSingleMeasurement().equalsIgnoreCase("1.0"));

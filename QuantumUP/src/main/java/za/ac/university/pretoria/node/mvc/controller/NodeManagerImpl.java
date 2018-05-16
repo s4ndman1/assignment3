@@ -1,9 +1,17 @@
 package za.ac.university.pretoria.node.mvc.controller;
 
+import org.apache.log4j.Logger;
 import za.ac.university.pretoria.node.api.NodeHandler;
 import za.ac.university.pretoria.node.api.NodeManager;
+import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
+import javax.ejb.Startup;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -13,25 +21,27 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@Singleton
+@Startup
 public class NodeManagerImpl implements NodeManager {
 
     private ExecutorService executorService;
     private NodeHandler nodeHandler;
     Map<String, Future> nodes;
-    private Integer activeNodes;
-    private Integer unavailableNodes;
-    private Integer busyNodes;
-    private Integer totalNodes;
+    private Logger logger = Logger.getLogger(NodeManagerImpl.class);
+    InitialContext ctx;
 
-    public NodeManagerImpl() {
-        nodeHandler = new NodeHandlerImpl();
+    @Inject
+    public NodeManagerImpl(NodeHandlerImpl nodeHandler) throws SQLException, NodeException, NamingException {
+        ctx = new InitialContext();
+        this.nodeHandler = nodeHandler;
         executorService = Executors.newCachedThreadPool();
         hydrateNodes();
         startTimer();
     }
 
     @Override
-    public boolean hydrateNodes() {
+    public boolean hydrateNodes() throws SQLException, NodeException {
 
         checkActiveNodes();
         checkUnavailableNodes();
@@ -40,21 +50,20 @@ public class NodeManagerImpl implements NodeManager {
     }
 
     @Override
-    public boolean createNode(NodeInfo nodeInfo) {
+    public boolean createNode(NodeInfo nodeInfo) throws SQLException {
 
         Future future = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    new NodeImpl();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    NodeImpl node = (NodeImpl) ctx.lookup("node");
+                    node.setNodeId(nodeInfo.getNodeId());
+                } catch (NamingException e) {
+                    logger.error("There was a problem starting up the node ", e);
                 }
             }
         });
-
+        nodeHandler.setNodeActive(nodeInfo.getNodeId());
         nodes.put(nodeInfo.getNodeId(), future);
         return true;
     }
@@ -80,26 +89,25 @@ public class NodeManagerImpl implements NodeManager {
     }
 
     @Override
-    public void checkUnavailableNodes() {
+    public synchronized void checkUnavailableNodes() throws SQLException, NodeException {
         List<NodeInfo> nodes = nodeHandler.getUnavailableNodes();
         for (NodeInfo node : nodes) {
             if (nodeHandler.isNodeActive(node.getNodeId())) {
                 createNode(node);
-                activeNodes++;
-                unavailableNodes--;
             }
         }
     }
 
     @Override
-    public void checkActiveNodes() {
+    public void checkActiveNodes() throws SQLException {
         List<NodeInfo> nodes = nodeHandler.getAvailableNodes();
         for (NodeInfo node : nodes) {
-            if (nodeHandler.isNodeActive(node.getNodeId())) {
+            if (node.getState().equalsIgnoreCase("Active")) {
                 createNode(node);
-                activeNodes++;
-                unavailableNodes--;
             }
+            else if (node.getState().equalsIgnoreCase("Busy"))
+                nodeHandler.setInterruptedNodeActive(node.getNodeId());
+                createNode(node);
         }
     }
 
@@ -108,29 +116,33 @@ public class NodeManagerImpl implements NodeManager {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                checkUnavailableNodes();
+                try {
+                    checkUnavailableNodes();
+                } catch (SQLException | NodeException e) {
+                   logger.error("There was an problem checking unavailable nodes ", e);
+                }
                 clearAllFinishedNodes();
             }
         }, 60000);
     }
 
     @Override
-    public Integer getActiveNodes() {
-        return activeNodes;
+    public Integer getActiveNodes() throws SQLException {
+        return nodeHandler.getTotalActiveNodes();
     }
 
     @Override
-    public Integer getUnavailableNodes() {
-        return unavailableNodes;
+    public Integer getUnavailableNodes() throws SQLException {
+        return nodeHandler.getTotalUnavailableNodes();
     }
 
     @Override
-    public Integer getBusyNodes() {
-        return busyNodes;
+    public Integer getBusyNodes() throws SQLException {
+        return nodeHandler.getTotalBusyNodes();
     }
 
     @Override
-    public Integer getTotalNodes() {
-        return totalNodes;
+    public Integer getTotalNodes() throws SQLException {
+        return nodeHandler.getTotalNodeCount();
     }
 }
