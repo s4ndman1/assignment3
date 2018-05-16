@@ -38,7 +38,7 @@ public class NodeImpl {
     private Gson gson;
 
     @Inject
-    public NodeImpl(NodeHandler nodeHandler) throws SQLException, ClassNotFoundException {
+    public NodeImpl(NodeHandler nodeHandler) {
         this.nodeHandler = nodeHandler;
         gson = new Gson();
         random = new Random();
@@ -73,10 +73,6 @@ public class NodeImpl {
                 logger.error("There was a problem checking to see if node " + getNodeId() + " is active ", e);
             }
         }
-
-    }
-
-    public void runNode() {
 
     }
 

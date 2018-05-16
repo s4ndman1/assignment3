@@ -2,7 +2,7 @@ package za.ac.university.pretoria.node.mvc.controller;
 
 
 import javax.annotation.Resource;
-import javax.inject.Singleton;
+import javax.ejb.Singleton;
 import javax.sql.DataSource;
 import java.sql.*;
 
@@ -11,6 +11,7 @@ public  class DatabaseConnection {
 
     @Resource
 	private DataSource dataSource;
+
 	private Statement stmt;
 	
 	 public DatabaseConnection() throws SQLException, ClassNotFoundException {

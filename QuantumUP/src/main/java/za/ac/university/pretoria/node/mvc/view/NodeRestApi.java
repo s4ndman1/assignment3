@@ -1,5 +1,6 @@
 package za.ac.university.pretoria.node.mvc.view;
 
+import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ public class NodeRestApi {
 
     @POST
     @Path("/approveNode/{adminID}/{timeStart}/{timeEnd}")
-    public boolean approveNode(@PathParam("adminID")String adminID, @PathParam("timeStart")String timeStart, @PathParam("timeEnd")String timeEnd) throws SQLException {
+    public boolean approveNode(@PathParam("adminID")String adminID, @PathParam("timeStart")String timeStart, @PathParam("timeEnd")String timeEnd) throws SQLException, NodeException {
 
         LocalTime startTime = LocalTime.parse(timeStart);
         LocalTime endTime = LocalTime.parse(timeEnd);

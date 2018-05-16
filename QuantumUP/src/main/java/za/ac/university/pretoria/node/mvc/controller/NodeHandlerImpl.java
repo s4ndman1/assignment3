@@ -4,8 +4,8 @@ import za.ac.university.pretoria.node.api.NodeHandler;
 import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
+import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;

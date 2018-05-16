@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import za.ac.university.pretoria.node.mvc.controller.DatabaseConnection;
 import za.ac.university.pretoria.node.api.NodeUI;
+import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 import za.ac.university.pretoria.node.mvc.view.NodeUIImpl;
 
@@ -30,7 +31,7 @@ public class nodeManagerTest {
     }
 
     @Test
-    public void testAddNode() throws SQLException {
+    public void testAddNode() throws SQLException, NodeException {
         LocalTime startTime = LocalTime.of(6, 0, 0, 0);
         LocalTime endTime = LocalTime.of(12, 0, 0, 0);
         String nodeID = manager.approveNode("ADN2018051304223", startTime, endTime);
@@ -48,7 +49,7 @@ public class nodeManagerTest {
 
 
     @Test
-    public void testDeleteNode() throws SQLException {
+    public void testDeleteNode() throws SQLException, NodeException {
         LocalTime startTime = LocalTime.of(6, 0, 0, 0);
         LocalTime endTime = LocalTime.of(12, 0, 0, 0);
         String nodeID = manager.approveNode("ADN2018051304223", startTime, endTime);
@@ -63,7 +64,7 @@ public class nodeManagerTest {
 
 
     @Test
-    public void testKillNode() throws SQLException {
+    public void testKillNode() throws SQLException, NodeException {
         LocalTime startTime = LocalTime.of(6, 0, 0, 0);
         LocalTime endTime = LocalTime.of(12, 0, 0, 0);
         String nodeID = manager.approveNode("ADN2018051304223", startTime, endTime);
@@ -84,7 +85,7 @@ public class nodeManagerTest {
     }
 
     @Test
-    public void testGetAllNodes() throws SQLException {
+    public void testGetAllNodes() throws SQLException, NodeException {
 
         LocalTime startTime = LocalTime.of(6, 0, 0, 0);
         LocalTime endTime = LocalTime.of(12, 0, 0, 0);
@@ -95,7 +96,7 @@ public class nodeManagerTest {
     }
 
     @Test
-    public void testGetOwnNodes() throws SQLException {
+    public void testGetOwnNodes() throws SQLException, NodeException {
 
         LocalTime startTime = LocalTime.of(6, 0, 0, 0);
         LocalTime endTime = LocalTime.of(12, 0, 0, 0);
@@ -107,7 +108,7 @@ public class nodeManagerTest {
 
 
     @Test
-    public void testSetActiveNode() throws SQLException {
+    public void testSetActiveNode() throws SQLException, NodeException {
 
         LocalTime startTime = LocalTime.of(6, 0, 0, 0);
         LocalTime endTime = LocalTime.of(12, 0, 0, 0);

@@ -6,10 +6,9 @@ import za.ac.university.pretoria.node.api.NodeManager;
 import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
+import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.sql.SQLException;
@@ -43,6 +42,7 @@ public class NodeManagerImpl implements NodeManager {
     @Override
     public boolean hydrateNodes() throws SQLException, NodeException {
 
+        logger.info("NodeManager: Hydrating all active nodes and changing unavailable nodes to active according to node calendar");
         checkActiveNodes();
         checkUnavailableNodes();
 
@@ -51,7 +51,7 @@ public class NodeManagerImpl implements NodeManager {
 
     @Override
     public boolean createNode(NodeInfo nodeInfo) throws SQLException {
-
+        logger.info("NodeManager: Creating node " + nodeInfo);
         Future future = executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -74,6 +74,7 @@ public class NodeManagerImpl implements NodeManager {
         for (String node : nodes.keySet()) {
             Future future = nodes.get(node);
             if (future.isDone()){
+                logger.info("NodeManager: Removing node " + node);
                 nodes.remove(node);
             }
         }
@@ -82,14 +83,19 @@ public class NodeManagerImpl implements NodeManager {
 
     @Override
     public boolean killNode(NodeInfo nodeInfo) {
+
+        logger.info("NodeManager: killing node" + nodeInfo.getNodeId());
         Future future = nodes.get(nodeInfo.getNodeId());
-        future.cancel(true);
-        nodes.remove(nodeInfo.getNodeId());
+        if(future != null) {
+            future.cancel(true);
+            nodes.remove(nodeInfo.getNodeId());
+        }
         return true;
     }
 
     @Override
     public synchronized void checkUnavailableNodes() throws SQLException, NodeException {
+        logger.info("NodeManager: changing unvailable nodes to active according to node calendar");
         List<NodeInfo> nodes = nodeHandler.getUnavailableNodes();
         for (NodeInfo node : nodes) {
             if (nodeHandler.isNodeActive(node.getNodeId())) {
@@ -101,6 +107,7 @@ public class NodeManagerImpl implements NodeManager {
     @Override
     public void checkActiveNodes() throws SQLException {
         List<NodeInfo> nodes = nodeHandler.getAvailableNodes();
+        logger.info("NodeManager: Creating active nodes and reseting busy nodes");
         for (NodeInfo node : nodes) {
             if (node.getState().equalsIgnoreCase("Active")) {
                 createNode(node);
@@ -117,6 +124,7 @@ public class NodeManagerImpl implements NodeManager {
             @Override
             public void run() {
                 try {
+                    logger.info("NodeManager: Executing timer service");
                     checkUnavailableNodes();
                 } catch (SQLException | NodeException e) {
                    logger.error("There was an problem checking unavailable nodes ", e);
@@ -128,21 +136,29 @@ public class NodeManagerImpl implements NodeManager {
 
     @Override
     public Integer getActiveNodes() throws SQLException {
-        return nodeHandler.getTotalActiveNodes();
+        int activeNodes = nodeHandler.getTotalActiveNodes();
+        logger.info("NodeManager: Total active nodes " + activeNodes);
+        return activeNodes;
     }
 
     @Override
     public Integer getUnavailableNodes() throws SQLException {
-        return nodeHandler.getTotalUnavailableNodes();
+        int unavailableNodes = nodeHandler.getTotalUnavailableNodes();
+        logger.info("NodeManager: Total unavailable nodes " + unavailableNodes);
+        return unavailableNodes;
     }
 
     @Override
     public Integer getBusyNodes() throws SQLException {
-        return nodeHandler.getTotalBusyNodes();
+        int busyNodes = nodeHandler.getTotalBusyNodes();
+        logger.info("NodeManager: Total busy nodes " + busyNodes);
+        return busyNodes;
     }
 
     @Override
     public Integer getTotalNodes() throws SQLException {
-        return nodeHandler.getTotalNodeCount();
+        int totalNodes = nodeHandler.getTotalBusyNodes();
+        logger.info("NodeManager: Total nodes " + totalNodes);
+        return totalNodes;
     }
 }
