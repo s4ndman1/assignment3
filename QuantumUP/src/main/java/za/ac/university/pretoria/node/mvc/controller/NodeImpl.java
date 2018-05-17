@@ -66,8 +66,10 @@ public class NodeImpl {
                 Task task = getTask();
                 if (task != null) {
                     nodeHandler.setNodeBusy(getNodeId());
+                    nodeHandler.addTask(task,getNodeId());
                     FinalReport reports = execute(task);
                     postReport(reports);
+                    nodeHandler.updateTask(task,getNodeId());
                 }
             } catch (SQLException | NodeException e) {
                 logger.error("There was a problem checking to see if node " + getNodeId() + " is active ", e);
