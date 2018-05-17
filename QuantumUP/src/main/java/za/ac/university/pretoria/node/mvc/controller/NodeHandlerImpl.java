@@ -3,12 +3,15 @@ package za.ac.university.pretoria.node.mvc.controller;
 import za.ac.university.pretoria.node.api.NodeHandler;
 import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
+import za.ac.university.pretoria.node.mvc.model.Task.Measurement;
+import za.ac.university.pretoria.node.mvc.model.Task.Task;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,5 +192,33 @@ public class NodeHandlerImpl implements NodeHandler {
         int totalResults = resultSet.getFetchSize();
 
         return totalResults;
+    }
+
+    @Override
+    public boolean addTask(Task task, String nodeID) throws SQLException {
+
+        for(Measurement measurement: task.getMeasurement()){
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            String taskID = "" + measurement.getID();
+
+            String query = "INSERT INTO NODE_TASK(task_id,start_time,node_id_fk) VALUES('"+taskID+"','"+currentDateTime.toString()+"', '"+nodeID+"')";
+            connection.executeQuery(query);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean updateTask(Task task, String nodeID) throws SQLException {
+
+        for(Measurement measurement: task.getMeasurement()){
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            String taskID = "" + measurement.getID();
+
+            String query = "UPDATE NODE_TASK SET END_TIME='"+currentDateTime.toString()+"' WHERE TASK_ID = '"+taskID+"'";
+            connection.executeQuery(query);
+        }
+
+        return true;
     }
 }
