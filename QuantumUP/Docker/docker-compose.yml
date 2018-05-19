@@ -1,18 +1,20 @@
 version: '3'
 services:
         weblogic:
-                image: "s4ndman1/weblogic"
+                image: "s4ndman1/weblogic:first"
                 ports:
                 - "7001:7001"
                 - "7002:7002"
                 depends_on:
-                - "oracle"
+                - oracle
+                links:
+                - oracle
+                container_name: weblogic
         oracle:
-                image: "s4ndman1/oracle"
+                image: "sath89/oracle-12c"
                 ports:
                 - "9981:1521"
                 - "9980:8080"
                 volumes: 
                 - .\my\oracle\data:/u01/app/oracle sath89/oracle-12c
-                environment:
-                - ORACLE_SID=task
+                container_name: oracle

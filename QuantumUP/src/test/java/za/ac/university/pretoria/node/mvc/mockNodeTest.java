@@ -30,7 +30,6 @@ public class mockNodeTest {
     public void init() throws SQLException, ClassNotFoundException {
         task = mock(Task.class);
         nodeHandler = mock(NodeHandler.class);
-        nodeImpl = new NodeImpl(nodeHandler);
         gson = new Gson();
 
         ArrayList<Measurement> measurements = new ArrayList<>();

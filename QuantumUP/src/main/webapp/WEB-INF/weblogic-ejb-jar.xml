@@ -1,0 +1,9 @@
+<weblogic-ejb-jar xmlns="http://www.bea.com/ns/weblogic/910" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.bea.com/ns/weblogic/910 http://www.bea.com/ns/weblogic/910/weblogic-ejb-jar.xsd">
+
+    <!--<resource-env-description>-->
+    <!--<resource-env-ref-name>weblogic.wsee.reliability2.tube.WsrmServerProtocolTube/dispatchFactory</resource-env-ref-name>-->
+    <!--<jndi-name>weblogic.wsee.reliability2.tube.WsrmServerProtocolTube/dispatchFactory</jndi-name>-->
+    <!--</resource-env-description>-->
+
+</weblogic-ejb-jar>

@@ -1,5 +1,6 @@
 package za.ac.university.pretoria.node.mvc.view;
 
+import za.ac.university.pretoria.node.api.NodeUI;
 import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
@@ -14,10 +15,13 @@ import java.util.List;
 @Path("/node")
 public class NodeRestApi {
 
-    NodeUIImpl nodeUI;
+    private NodeUI nodeUI;
+
+    public NodeRestApi() {
+    }
 
     @Inject
-    public NodeRestApi(NodeUIImpl nodeUI) throws SQLException, ClassNotFoundException {
+    public void setNodeUI(NodeUI nodeUI) {
         this.nodeUI = nodeUI;
     }
 

@@ -28,10 +28,19 @@ public class NodeUIImpl implements NodeUI {
 	private NodeManager nodeManager;
 	private Random random;
 	Logger logger = Logger.getLogger(NodeUIImpl.class);
-	@Inject
-	public NodeUIImpl(DatabaseConnection connection, NodeManager nodeManager) throws SQLException, ClassNotFoundException {
-		con=connection;
-		this.nodeManager = nodeManager;
+
+
+    @Inject
+    public void setCon(DatabaseConnection con) {
+        this.con = con;
+    }
+
+    @Inject
+    public void setNodeManager(NodeManager nodeManager) {
+        this.nodeManager = nodeManager;
+    }
+
+	public NodeUIImpl() throws SQLException, ClassNotFoundException {
 		random = new Random();
 	}
 

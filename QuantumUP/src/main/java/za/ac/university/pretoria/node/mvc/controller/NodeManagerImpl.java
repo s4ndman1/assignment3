@@ -6,6 +6,7 @@ import za.ac.university.pretoria.node.api.NodeManager;
 import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -30,12 +31,24 @@ public class NodeManagerImpl implements NodeManager {
     private Logger logger = Logger.getLogger(NodeManagerImpl.class);
     InitialContext ctx;
 
+
     @Inject
-    public NodeManagerImpl(NodeHandlerImpl nodeHandler) throws SQLException, NodeException, NamingException {
-        ctx = new InitialContext();
+    public void setNodeHandler(NodeHandler nodeHandler) {
         this.nodeHandler = nodeHandler;
+    }
+
+    public NodeManagerImpl() throws NamingException {
         executorService = Executors.newCachedThreadPool();
-        hydrateNodes();
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            hydrateNodes();
+            startTimer();
+        } catch (SQLException | NodeException e) {
+            logger.error("There was a problem initiating the node manager");
+        }
         startTimer();
     }
 
@@ -94,7 +107,7 @@ public class NodeManagerImpl implements NodeManager {
     }
 
     @Override
-    public synchronized void checkUnavailableNodes() throws SQLException, NodeException {
+    public void checkUnavailableNodes() throws SQLException, NodeException {
         logger.info("NodeManager: changing unvailable nodes to active according to node calendar");
         List<NodeInfo> nodes = nodeHandler.getUnavailableNodes();
         for (NodeInfo node : nodes) {

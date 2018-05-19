@@ -8,6 +8,7 @@ import za.ac.university.pretoria.node.mvc.model.Task.Task;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -21,10 +22,14 @@ public class NodeHandlerImpl implements NodeHandler {
 
     private DatabaseConnection connection;
 
+    public NodeHandlerImpl() {
+    }
+
     @Inject
-    public NodeHandlerImpl(DatabaseConnection connection) throws SQLException, ClassNotFoundException {
+    public void setConnection(DatabaseConnection connection) {
         this.connection = connection;
     }
+
 
     @Override
     public boolean isNodeActive(String nodeID) throws SQLException, NodeException {
