@@ -5,9 +5,12 @@ services:
                 ports:
                 - "7001:7001"
                 - "7002:7002"
+                depends_on:
+                - "oracle"
         oracle:
                 image: "s4ndman1/oracle"
                 ports:
                 - "9981:1521"
                 - "9980:8080"
-                volume: /my/oracle/data:/u01/app/oracle sath89/oracle-12c
+                volumes: 
+                ` .\my\oracle\data:/u01/app/oracle sath89/oracle-12c
