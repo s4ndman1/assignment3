@@ -14,3 +14,5 @@ services:
                 - "9980:8080"
                 volumes: 
                 - .\my\oracle\data:/u01/app/oracle sath89/oracle-12c
+                environment:
+                - ORACLE_SID=task
