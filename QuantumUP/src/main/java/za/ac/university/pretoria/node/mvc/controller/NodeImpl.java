@@ -12,6 +12,7 @@ import za.ac.university.pretoria.node.mvc.model.Report.Value;
 import za.ac.university.pretoria.node.mvc.model.Task.Measurement;
 import za.ac.university.pretoria.node.mvc.model.Task.Task;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -27,12 +28,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-@Stateless(mappedName = "node")
+@Stateless(mappedName = "nodeImpl")
 public class NodeImpl {
 
     private Random random;
     private NodeHandler nodeHandler;
-    private String nodeId;
     private Logger logger = Logger.getLogger(NodeImpl.class);
     private Gson gson;
 
@@ -44,35 +44,33 @@ public class NodeImpl {
     public NodeImpl() {
         gson = new Gson();
         random = new Random();
-        String nodeId;
+    }
+
+    public void startOperations(String id){
+
+        String nodeId = id;
         Boolean isNodeActive = true;
-        while (!isNodeActive) {
+        if(nodeId != null)
+        while (isNodeActive) {
 
             try {
-                isNodeActive = nodeHandler.isNodeActive(getNodeId());
+                isNodeActive = nodeHandler.isNodeActive(nodeId);
                 if (isNodeActive)
-                    nodeHandler.setNodeActive(getNodeId());
+                    nodeHandler.setNodeActive(nodeId);
 
-                Task task = getTask(isNodeActive);
+                Task task = getTask(isNodeActive,nodeId);
                 if (task != null) {
-                    nodeHandler.setNodeBusy(getNodeId());
-                    nodeHandler.addTask(task,getNodeId());
+                    nodeHandler.setNodeBusy(nodeId);
+                    nodeHandler.addTask(task, nodeId);
                     FinalReport reports = execute(task);
                     postReport(reports);
-                    nodeHandler.updateTask(task,getNodeId());
+                    nodeHandler.updateTask(task, nodeId);
                 }
             } catch (SQLException | NodeException e) {
-                logger.error("There was a problem checking to see if node " + getNodeId() + " is active ", e);
+                logger.error("There was a problem checking to see if node " + nodeId + " is active ", e);
             }
         }
-    }
 
-    public String getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
     }
 
     public boolean postReport(FinalReport report) {
@@ -99,7 +97,7 @@ public class NodeImpl {
         return true;
     }
 
-    public Task getTask(Boolean isNodeActive) {
+    public Task getTask(Boolean isNodeActive, String nodeId) {
         Task task = null;
         if (isNodeActive == true) {
             try {
@@ -131,7 +129,7 @@ public class NodeImpl {
             if (task == null) {
                 try {
                     Thread.sleep(60000);
-                    task = getTask(isNodeActive);
+                    task = getTask(isNodeActive,nodeId);
                 } catch (InterruptedException e) {
                     logger.error("There was a problem while waiting for a new task on node " + nodeId, e);
                 }
@@ -152,8 +150,7 @@ public class NodeImpl {
             report.setTaskId(measurement.getID() + "");
             LocalTime localTime = LocalTime.now();
 
-
-            int loop = random.nextInt(30)+30;
+            int loop = random.nextInt(30) + 30;
 
             Value value = new Value();
             value.setTimestamp(LocalTime.now().toString());

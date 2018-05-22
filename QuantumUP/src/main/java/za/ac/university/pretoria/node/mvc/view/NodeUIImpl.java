@@ -86,7 +86,7 @@ public class NodeUIImpl implements NodeUI {
 				+ " where NODE_ID = '" + nodeID+"'";
 		
 	
-			con.executeQuery(query);
+		con.executeQuery(query);
 		NodeInfo nodeInfo = new NodeInfo();
 		nodeInfo.setNodeId(nodeID);
 		nodeManager.killNode(nodeInfo);

@@ -14,7 +14,7 @@
     <appender name="file_logger" class="org.apache.log4j.RollingFileAppender">
         	<param name="MaxFileSize" value="10MB"/>
         	<param name="MaxBackupIndex" value="10"/>
-        	<param name="File" value="./logs/kss_logs.log" />
+        	<param name="File" value="./logs/quantum.log" />
         	<param name="Append" value="true" />
         	<layout class="org.apache.log4j.PatternLayout">
           		<param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss,SSS} %t %-5p %c{2} %x - %m%n"/>

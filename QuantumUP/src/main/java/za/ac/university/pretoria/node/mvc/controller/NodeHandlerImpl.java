@@ -34,10 +34,9 @@ public class NodeHandlerImpl implements NodeHandler {
     @Override
     public boolean isNodeActive(String nodeID) throws SQLException, NodeException {
 
-        String query = "SELECT node_active_start_time, node_active_end_time FROM NODE_CALENDAR WHERE calender_id = '" + nodeID + "'";
+        String query = "SELECT NODE_ACTIVE_START_TIME, NODE_ACTIVE_END_TIME FROM NODE_CALENDER WHERE NODE_ID_FK = '" + nodeID + "'";
 
         ResultSet resultSet = connection.executeQuery(query);
-        List<NodeInfo> nodeInfos = new ArrayList<>();
         LocalTime activeTime = null;
         LocalTime endTime = null;
         while (resultSet.next()) {
@@ -125,7 +124,7 @@ public class NodeHandlerImpl implements NodeHandler {
     @Override
     public List<NodeInfo> getAvailableNodes() throws SQLException {
 
-        String query = "SELECT NODE_ID FROM NODE_INFO WHERE NODE_STATUS = (SELECT STATE_ID FROM STATE_MAHCINE WHERE STATE_DESCRIPTION = 'Unavailable')";
+        String query = "SELECT NODE_ID FROM NODE_INFO WHERE NODE_STATUS = (SELECT STATE_ID FROM STATE_MAHCINE WHERE STATE_DESCRIPTION = 'Active')";
 
         ResultSet resultSet = connection.executeQuery(query);
         List<NodeInfo> nodeInfos = new ArrayList<>();
@@ -149,7 +148,6 @@ public class NodeHandlerImpl implements NodeHandler {
             nodeInfo.setState("Busy");
             nodeInfos.add(nodeInfo);
         }
-
         return nodeInfos;
     }
 

@@ -11,9 +11,9 @@ public interface NodeManager {
 
     public boolean createNode(NodeInfo nodeInfo) throws SQLException;
 
-    public boolean clearAllFinishedNodes();
+    public boolean clearAllFinishedNodes() throws SQLException;
 
-    public boolean killNode(NodeInfo nodeInfo);
+    public boolean killNode(NodeInfo nodeInfo) throws SQLException;
 
     public void checkUnavailableNodes() throws SQLException, NodeException;
 

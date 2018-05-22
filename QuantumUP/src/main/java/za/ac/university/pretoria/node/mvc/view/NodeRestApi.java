@@ -10,6 +10,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Path("/node")
@@ -43,9 +44,9 @@ public class NodeRestApi {
     @POST
     @Path("/approveNode/{adminID}/{timeStart}/{timeEnd}")
     public boolean approveNode(@PathParam("adminID")String adminID, @PathParam("timeStart")String timeStart, @PathParam("timeEnd")String timeEnd) throws SQLException, NodeException {
-
-        LocalTime startTime = LocalTime.parse(timeStart);
-        LocalTime endTime = LocalTime.parse(timeEnd);
+        DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime startTime = LocalTime.from(TIME_FORMATTER.parse(timeStart));
+        LocalTime endTime =  LocalTime.from(TIME_FORMATTER.parse(timeEnd));
 
         nodeUI.approveNode(adminID,startTime,endTime);
         return true;
