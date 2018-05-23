@@ -32,3 +32,7 @@ CREATE TABLE NODE_TASKS
   node_id_fk VARCHAR2(20 CHAR) NOT NULL REFERENCES NODE_INFO(node_id),
   CONSTRAINT task_table_pk PRIMARY KEY(task_id)
 );
+
+Insert into COS.STATE_MAHCINE (STATE_ID,STATE_DESCRIPTION) values ('1','Active');
+Insert into COS.STATE_MAHCINE (STATE_ID,STATE_DESCRIPTION) values ('2','Busy');
+Insert into COS.STATE_MAHCINE (STATE_ID,STATE_DESCRIPTION) values ('3','Unavailable');
