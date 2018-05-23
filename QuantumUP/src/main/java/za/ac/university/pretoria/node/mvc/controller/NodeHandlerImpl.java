@@ -3,7 +3,6 @@ package za.ac.university.pretoria.node.mvc.controller;
 import za.ac.university.pretoria.node.api.NodeHandler;
 import za.ac.university.pretoria.node.mvc.model.NodeException;
 import za.ac.university.pretoria.node.mvc.model.NodeInfo;
-import za.ac.university.pretoria.node.mvc.model.Task.Measurement;
 import za.ac.university.pretoria.node.mvc.model.Task.Task;
 
 import javax.ejb.Singleton;
@@ -14,6 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,12 +60,13 @@ public class NodeHandlerImpl implements NodeHandler {
     @Override
     public boolean setNodeActive(String nodeID) throws SQLException {
 
-        String query = "UPDATE NODE_INFO "
-                + "SET NODE_STATUS = "
-                + "(SELECT STATE_ID FROM STATE_MAHCINE WHERE STATE_DESCRIPTION = 'Active')"
-                + " where NODE_ID = '" + nodeID + "'";
+            String query = "UPDATE NODE_INFO "
+                    + "SET NODE_STATUS = "
+                    + "(SELECT STATE_ID FROM STATE_MAHCINE WHERE STATE_DESCRIPTION = 'Active')"
+                    + " where NODE_ID = '" + nodeID + "'";
 
-        connection.executeQuery(query);
+            connection.executeQuery(query);
+
         return true;
     }
 
@@ -91,6 +92,7 @@ public class NodeHandlerImpl implements NodeHandler {
         return true;
     }
 
+
     @Override
     public boolean setInterruptedNodeActive(String nodeID) throws SQLException {
         String query = "DELETE FROM NODE_TASKS WHERE  NODE_ID_FK = '"+nodeID+"' AND END_TIME IS NULL";
@@ -103,6 +105,22 @@ public class NodeHandlerImpl implements NodeHandler {
 
         connection.executeQuery(query);
         return true;
+    }
+
+    @Override
+    public boolean isNodeAlreadyActive(String nodeID) throws SQLException {
+        String query = "SELECT STATE_DESCRIPTION FROM STATE_MAHCINE WHERE STATE_ID = (SELECT NODE_STATUS FROM NODE_INFO WHERE NODE_ID = '"+nodeID+"')";
+        String testActive;
+        ResultSet resultSet = connection.executeQuery(query);
+        while (resultSet.next()) {
+
+            testActive = resultSet.getString(1);
+            if(testActive.equalsIgnoreCase("Active"))
+                return true;
+            else
+                return false;
+        }
+        return false;
     }
 
     @Override
@@ -200,13 +218,12 @@ public class NodeHandlerImpl implements NodeHandler {
     @Override
     public boolean addTask(Task task, String nodeID) throws SQLException {
 
-        for(Measurement measurement: task.getMeasurement()){
             LocalDateTime currentDateTime = LocalDateTime.now();
-            String taskID = "" + measurement.getID();
+            String taskID = "" + task.getExperiment().getID();
 
-            String query = "INSERT INTO NODE_TASK(task_id,start_time,node_id_fk) VALUES('"+taskID+"','"+currentDateTime.toString()+"', '"+nodeID+"')";
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MMM/uuuu");
+            String query = "INSERT INTO NODE_TASKS(task_id,start_time,node_id_fk) VALUES('"+taskID+"','"+LocalDate.now().format(df)+"', '"+nodeID+"')";
             connection.executeQuery(query);
-        }
 
         return true;
     }
@@ -214,13 +231,14 @@ public class NodeHandlerImpl implements NodeHandler {
     @Override
     public boolean updateTask(Task task, String nodeID) throws SQLException {
 
-        for(Measurement measurement: task.getMeasurement()){
-            LocalDateTime currentDateTime = LocalDateTime.now();
-            String taskID = "" + measurement.getID();
 
-            String query = "UPDATE NODE_TASK SET END_TIME='"+currentDateTime.toString()+"' WHERE TASK_ID = '"+taskID+"'";
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            String taskID = "" + task.getExperiment().getID();
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MMM/uuuu");
+
+            String query = "UPDATE NODE_TASKS SET END_TIME='"+LocalDate.now().format(df)+"' WHERE TASK_ID = '"+taskID+"'";
             connection.executeQuery(query);
-        }
+
 
         return true;
     }

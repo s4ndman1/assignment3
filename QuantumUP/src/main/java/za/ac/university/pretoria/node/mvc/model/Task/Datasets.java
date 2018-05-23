@@ -12,9 +12,9 @@ package za.ac.university.pretoria.node.mvc.model.Task;
  */
 public class Datasets {
     private int ID;
-    private int ExperimentId;
+    private int UserId;
     private String Name;
-    private String Datapath;
+    private String FilePath;
 
     public int getID() {
         return ID;
@@ -24,12 +24,12 @@ public class Datasets {
         this.ID = ID;
     }
 
-    public int getExperimentId() {
-        return ExperimentId;
+    public int getUserId() {
+        return UserId;
     }
 
-    public void setExperimentId(int ExperimentId) {
-        this.ExperimentId = ExperimentId;
+    public void setUserId(int UserId) {
+        this.UserId = UserId;
     }
 
     public String getName() {
@@ -40,13 +40,14 @@ public class Datasets {
         this.Name = Name;
     }
 
-    public String getDatapath() {
-        return Datapath;
+    public String getFilePath() {
+        return FilePath;
     }
 
-    public void setDatapath(String Datapath) {
-        this.Datapath = Datapath;
+    public void setFilePath(String FilePath) {
+        this.FilePath = FilePath;
     }
 
+   
    
 }

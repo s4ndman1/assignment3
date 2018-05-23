@@ -10,7 +10,7 @@ package za.ac.university.pretoria.node.mvc.model.Task;
  *
  * @author i
  */
-public class Measurement {
+public class Measurements {
     private int ID;
     private int ExperimentId;
     private String Name;

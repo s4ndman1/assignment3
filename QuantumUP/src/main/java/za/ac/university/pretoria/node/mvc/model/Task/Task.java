@@ -15,14 +15,13 @@ public class Task {
     private Experiments experiment;
     private ArrayList<Datasets> dataset;
     private ArrayList<Algorithms> algorithm;
-    private ArrayList<Measurement> measurement;
 
     public Task()
     {
         experiment = new Experiments();
         dataset = new ArrayList<>();
         algorithm = new ArrayList<>();
-        measurement = new ArrayList<>();
+        
     }
 
     public Experiments getExperiment() {
@@ -49,13 +48,7 @@ public class Task {
         this.algorithm = algorithm;
     }
     
-     public ArrayList<Measurement> getMeasurement() {
-        return measurement;
-    }
-
-    public void setMeasurement(ArrayList<Measurement> measurement) {
-        this.measurement = measurement;
-    }
+     
     
     
 }

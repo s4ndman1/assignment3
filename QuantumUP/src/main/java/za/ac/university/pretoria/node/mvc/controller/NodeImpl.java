@@ -9,10 +9,8 @@ import za.ac.university.pretoria.node.mvc.model.Report.FinalReport;
 import za.ac.university.pretoria.node.mvc.model.Report.Report;
 import za.ac.university.pretoria.node.mvc.model.Report.ValueMetaData;
 import za.ac.university.pretoria.node.mvc.model.Report.Value;
-import za.ac.university.pretoria.node.mvc.model.Task.Measurement;
 import za.ac.university.pretoria.node.mvc.model.Task.Task;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -21,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -46,30 +45,40 @@ public class NodeImpl {
         random = new Random();
     }
 
-    public void startOperations(String id){
+    public boolean startOperations(String id) {
 
         String nodeId = id;
         Boolean isNodeActive = true;
-        if(nodeId != null)
-        while (isNodeActive) {
+        if (nodeId != null)
+            while (isNodeActive) {
 
-            try {
-                isNodeActive = nodeHandler.isNodeActive(nodeId);
-                if (isNodeActive)
-                    nodeHandler.setNodeActive(nodeId);
+                try {
+                    logger.info("Checking to see if node " + id + " is active");
+                    isNodeActive = nodeHandler.isNodeActive(nodeId);
+                    if (isNodeActive) {
+                        if (!nodeHandler.isNodeAlreadyActive(nodeId))
+                            nodeHandler.setNodeActive(nodeId);
 
-                Task task = getTask(isNodeActive,nodeId);
-                if (task != null) {
-                    nodeHandler.setNodeBusy(nodeId);
-                    nodeHandler.addTask(task, nodeId);
-                    FinalReport reports = execute(task);
-                    postReport(reports);
-                    nodeHandler.updateTask(task, nodeId);
+                        logger.info("Getting task for node " + id);
+                        Task task = getTask(isNodeActive, nodeId);
+                        if (task != null) {
+                            logger.info("Got a task for node " + id);
+                            nodeHandler.setNodeBusy(nodeId);
+                            logger.info("Adding Task for node" + id);
+                            nodeHandler.addTask(task, nodeId);
+                            logger.info("Executing task for node " + id);
+                            FinalReport reports = execute(task);
+                            logger.info("Posting report for task in node " + id);
+                            postReport(reports);
+                            logger.info("Updating task to finished for node" + id);
+                            nodeHandler.updateTask(task, nodeId);
+                        }
+                    }
+                } catch (SQLException | NodeException e) {
+                    logger.error("There was a problem checking to see if node " + nodeId + " is active ", e);
                 }
-            } catch (SQLException | NodeException e) {
-                logger.error("There was a problem checking to see if node " + nodeId + " is active ", e);
             }
-        }
+            return true;
 
     }
 
@@ -81,15 +90,16 @@ public class NodeImpl {
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, json);
             Request request = new Request.Builder()
-                    .url("http://localhost:8080/Executions/webresources/executionPackage/postResult?result")
-                    .post(body)
+                    .url("http://localhost:7001/Executions/webresources/executionPackage/postResult?result")
+                    .put(body)
                     .addHeader("content-type", "application/json")
                     .addHeader("cache-control", "no-cache")
                     .addHeader("postman-token", "08af0720-79cc-ff3d-2a7d-f208202e5ec0")
                     .build();
 
             Response response = client.newCall(request).execute();
-        } catch (IOException e) {
+
+        } catch (Exception e) {
 
             logger.error("There was a problem posting the response to the execution team ", e);
         }
@@ -102,7 +112,7 @@ public class NodeImpl {
         if (isNodeActive == true) {
             try {
 
-                URL url = new URL("http://localhost:8080/Executions/webresources/executionPackage/getTask");
+                URL url = new URL("http://localhost:7001/Executions/webresources/executionPackage/getTask");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/json");
@@ -121,16 +131,17 @@ public class NodeImpl {
                 }
                 task = convertJsonToTask(jsonBuffer.toString());
                 conn.disconnect();
-
+                task.getExperiment().setID(random.nextInt(100000000));
             } catch (IOException e) {
 
                 logger.error("There was a problem fetching a task from the execution team ", e);
             }
             if (task == null) {
                 try {
-                    Thread.sleep(60000);
-                    task = getTask(isNodeActive,nodeId);
-                } catch (InterruptedException e) {
+                    Thread.sleep(10000);
+                    isNodeActive = nodeHandler.isNodeActive(nodeId);
+                    task = getTask(isNodeActive, nodeId);
+                } catch (InterruptedException | NodeException | SQLException e) {
                     logger.error("There was a problem while waiting for a new task on node " + nodeId, e);
                 }
             }
@@ -141,13 +152,14 @@ public class NodeImpl {
     public FinalReport execute(Task task) {
         FinalReport finalReport = new FinalReport();
         ValueMetaData valueMetaData = new ValueMetaData();
-
-        for (Measurement measurement : task.getMeasurement()) {
+        if (task.getExperiment().getNumberOfIterations() == 0)
+            task.getExperiment().setNumberOfIterations(1);
+        for (int i = 0; i < task.getExperiment().getNumberOfIterations(); i++) {
 
 
             Report report = new Report();
-            report.setDispatcher(measurement.getName());
-            report.setTaskId(measurement.getID() + "");
+            report.setDispatcher(task.getExperiment().getName());
+            report.setTaskId(task.getExperiment().getID() + "");
             LocalTime localTime = LocalTime.now();
 
             int loop = random.nextInt(30) + 30;

@@ -15,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -66,9 +67,10 @@ public class NodeManagerImpl implements NodeManager {
         Future future = executorService.submit(() -> {
             try {
                 NodeImpl node = (NodeImpl) ctx.lookup("java:global.QuantumUP-1.0.0-SNAPSHOT.NodeImpl");
-                node.startOperations(nodeInfo.getNodeId());
+                return node.startOperations(nodeInfo.getNodeId());
             } catch (NamingException e) {
                 logger.error("There was a problem starting up the node ", e);
+                throw e;
             }
         });
         nodeHandler.setNodeActive(nodeInfo.getNodeId());

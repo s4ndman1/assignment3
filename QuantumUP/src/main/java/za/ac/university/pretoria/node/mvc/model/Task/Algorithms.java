@@ -12,9 +12,12 @@ package za.ac.university.pretoria.node.mvc.model.Task;
  */
 public class Algorithms {
     private int ID;
-    private int ExperimentId;
+    private int UserId;
     private String Name;
-    private String Path;
+    private String Language;
+    private String FilePath;
+    private String CompileCommand;
+    private String RunCommand;
 
     public int getID() {
         return ID;
@@ -24,12 +27,12 @@ public class Algorithms {
         this.ID = ID;
     }
 
-    public int getExperimentId() {
-        return ExperimentId;
+    public int getUserId() {
+        return UserId;
     }
 
-    public void setExperimentId(int ExperimentId) {
-        this.ExperimentId = ExperimentId;
+    public void setUserId(int UserId) {
+        this.UserId = UserId;
     }
 
     public String getName() {
@@ -40,13 +43,39 @@ public class Algorithms {
         this.Name = Name;
     }
 
-    public String getPath() {
-        return Path;
+    public String getLanguage() {
+        return Language;
     }
 
-    public void setPath(String Path) {
-        this.Path = Path;
+    public void setLanguage(String Language) {
+        this.Language = Language;
     }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String FilePath) {
+        this.FilePath = FilePath;
+    }
+
+    public String getCompileCommand() {
+        return CompileCommand;
+    }
+
+    public void setCompileCommand(String CompileCommand) {
+        this.CompileCommand = CompileCommand;
+    }
+
+    public String getRunCommand() {
+        return RunCommand;
+    }
+
+    public void setRunCommand(String RunCommand) {
+        this.RunCommand = RunCommand;
+    }
+
+    
     
     
 }

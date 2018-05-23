@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface NodeHandler {
 
+    public boolean isNodeAlreadyActive(String nodeID) throws SQLException;
+
     public boolean isNodeActive(String nodeID) throws SQLException, NodeException;
 
     public boolean setNodeActive(String nodeID) throws SQLException;
